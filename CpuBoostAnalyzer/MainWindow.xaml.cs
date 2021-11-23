@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -36,15 +37,23 @@ namespace CpuBoostAnalyzer
 
         private readonly DispatcherQueueTimer timer;
 
+        private readonly String licenseKey = "NTM4NDg5QDMxMzkyZTMzMmUzMFVVcmhxVWt0OHV2L1ZWZ1NEbE04RHV1YUVEZENlbTBTeHFySWMzTytlalk9";
+
+        private ViewModel viewModel;
+
         public MainWindow()
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(licenseKey);
+
             this.InitializeComponent();
 
             this.InitializeCorePerformanceCounter();
 
             this.InitializePowerPerformanceCounter();
 
+            viewModel = new();
 
+            ccTest.DataContext = viewModel;
 
             foreach (var counter in corePerformanceCounters)
             {
@@ -110,8 +119,12 @@ namespace CpuBoostAnalyzer
 
             for (int i = 0; i < this.powerPerformanceCounters.Count; i++)
             {
-                this.energyDataSources[i].Power = (int)this.powerPerformanceCounters[i].NextValue();
+                // this.energyDataSources[i].Power = (int)this.powerPerformanceCounters[i].NextValue();
             }
+
+            this.viewModel.Data.RemoveAt(0);
+            this.viewModel.Data.Add(new Person { Name = "T", Height = powerPerformanceCounters[1].NextValue() });
+            
         }
 
         private void InitializeCorePerformanceCounter()
@@ -169,5 +182,34 @@ namespace CpuBoostAnalyzer
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
+    }
+
+    public class Person
+    {
+        public string Name { get; set; }
+
+        public double Height { get; set; }
+    }
+
+    public class ViewModel
+    {
+        public ObservableCollection<Person> Data { get; set; }
+
+        public ViewModel()
+        {
+            Data = new ObservableCollection<Person>()
+            {
+                new Person { Name = "1", Height = 0 },
+                new Person { Name = "2", Height = 0 },
+                new Person { Name = "3", Height = 0 },
+                new Person { Name = "4", Height = 0 },
+                new Person { Name = "5", Height = 0 },
+                new Person { Name = "6", Height = 0 },
+                new Person { Name = "7", Height = 0 },
+                new Person { Name = "8", Height = 0 },
+                new Person { Name = "9", Height = 0 },
+                new Person { Name = "10", Height = 0 }
+            };
+        }
     }
 }
